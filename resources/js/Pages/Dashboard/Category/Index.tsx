@@ -1,4 +1,4 @@
-import { ModalAdd } from "@/Components/Dashboard/ModalForm";
+import { ModalForm } from "@/Components/Dashboard/ModalForm";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/Components/ui/label";
 import { useToast } from "@/hooks/use-toast";
@@ -32,11 +32,20 @@ function Index({ categories }: { categories: Category[] }) {
                     });
                     setOpen(false); // Closes the modal on success
                 },
+                onError: () => {
+                    toast({
+                        title: "Error",
+                        description: "Something went wrong. Please try again.",
+                        duration: 2000,
+                    });
+                },
             }
         );
     };
 
-    const handleEdit = () => {};
+    const handleEdit = (data: Category) => {
+        console.log(data);
+    };
 
     const columns: ColumnDef<Category>[] = [
         {
@@ -48,14 +57,25 @@ function Index({ categories }: { categories: Category[] }) {
             header: "Slug",
         },
         {
+            header: "Actions",
             id: "actions",
             cell: ({ row }) => (
-                <Button
-                    variant="outline"
-                    onClick={() => handleEdit(row.original)}
+                <ModalForm
+                    title="Edit Category"
+                    description="Edit Category details"
+                    triggerText="Edit"
+                    onSubmit={(formData) => handleEdit({ ...row.original })}
+                    buttonText="Edit"
                 >
-                    Edit
-                </Button>
+                    <div>
+                        <Label htmlFor="name">Category Name</Label>
+                        <Input
+                            name="name"
+                            placeholder="Enter category name"
+                            defaultValue={row.original.name}
+                        />
+                    </div>
+                </ModalForm>
             ),
         },
     ];
@@ -72,7 +92,7 @@ function Index({ categories }: { categories: Category[] }) {
                 </div>
 
                 <div className="inline-flex">
-                    <ModalAdd
+                    <ModalForm
                         title="Add New Category"
                         description="Enter Category details below"
                         triggerText="Add Category"
@@ -89,15 +109,17 @@ function Index({ categories }: { categories: Category[] }) {
                             />
                         </div>
                         {/* Add more fields as needed */}
-                    </ModalAdd>
+                    </ModalForm>
                 </div>
 
                 <div className="grid">
-                    <DataTable data={categories} columns={columns} filterColumn="name" />
+                    <DataTable
+                        data={categories}
+                        columns={columns}
+                        filterColumn="name"
+                    />
                 </div>
             </div>
-
-            {/* Create button with modal to create new category */}
         </>
     );
 }

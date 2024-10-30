@@ -62,7 +62,16 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category)
     {
-        //
+        $request->validate([
+            'name'=> 'required|unique:categories',
+        ]);
+
+        $category->update([
+            'name'=> $request->name,
+            'slug' => \Illuminate\Support\Str::slug($request->name),
+        ]);
+
+        return to_route('dashboard.categories.index')->with('success','Category updated successfully');
     }
 
     /**

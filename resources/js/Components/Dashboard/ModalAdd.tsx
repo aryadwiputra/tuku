@@ -13,7 +13,7 @@ import { Label } from "@/Components/ui/label";
 import React, { useState } from "react";
 import { useForm } from "@inertiajs/react"; // Assuming you're using Inertia's React adapter
 
-type ModalFormProps = {
+type ModalAddProps = {
     title: string;
     description: string;
     triggerText: string;
@@ -22,14 +22,14 @@ type ModalFormProps = {
     buttonText?: string;
 };
 
-export function ModalForm({
+export function ModalAdd({
     title,
     description,
     triggerText,
     children,
     onSubmit,
     buttonText = "Save changes",
-}: ModalFormProps) {
+}: ModalAddProps) {
     const [open, setOpen] = useState(false);
 
     const handleSubmit = async (event: React.FormEvent) => {
