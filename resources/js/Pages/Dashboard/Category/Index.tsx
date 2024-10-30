@@ -93,7 +93,7 @@ function Index({ categories }: { categories: Category[] }) {
                 </div>
 
                 <div className="grid">
-                    <DataTable data={categories} columns={columns} />
+                    <DataTable data={categories} columns={columns} filterColumn="name" />
                 </div>
             </div>
 

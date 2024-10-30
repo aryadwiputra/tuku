@@ -38,9 +38,14 @@ import {
 type DataTableProps<TData> = {
     data: TData[];
     columns: ColumnDef<TData>[];
+    filterColumn: string;
 };
 
-export function DataTable<TData>({ data, columns }: DataTableProps<TData>) {
+export function DataTable<TData>({
+    data,
+    columns,
+    filterColumn,
+}: DataTableProps<TData>) {
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const [columnFilters, setColumnFilters] =
         React.useState<ColumnFiltersState>([]);
@@ -74,12 +79,12 @@ export function DataTable<TData>({ data, columns }: DataTableProps<TData>) {
                     placeholder="Filter..."
                     value={
                         (table
-                            .getColumn("email")
+                            .getColumn(filterColumn)
                             ?.getFilterValue() as string) ?? ""
                     }
                     onChange={(event) =>
                         table
-                            .getColumn("email")
+                            .getColumn(filterColumn)
                             ?.setFilterValue(event.target.value)
                     }
                     className="max-w-sm"
