@@ -70,6 +70,9 @@ import {
     SidebarRail,
     SidebarTrigger,
 } from "@/Components/ui/sidebar";
+
+import { Toaster } from "@/Components/ui/toaster";
+
 // This is sample data.
 const data = {
     user: {
@@ -96,22 +99,14 @@ const data = {
     ],
     navMain: [
         {
-            title: "Playground",
+            title: "Master Data",
             url: "#",
             icon: SquareTerminal,
             isActive: true,
             items: [
                 {
-                    title: "History",
-                    url: "#",
-                },
-                {
-                    title: "Starred",
-                    url: "#",
-                },
-                {
-                    title: "Settings",
-                    url: "#",
+                    title: "Categories",
+                    url: route("dashboard.categories.index"),
                 },
             ],
         },
@@ -487,6 +482,7 @@ export default function Page({ children }: { children: React.ReactNode }) {
                 <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
                     {children}
                 </div>
+                <Toaster />
             </SidebarInset>
         </SidebarProvider>
     );
