@@ -22,6 +22,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
+        return Inertia::render('Dashboard/Category/Create');
     }
 
     /**
@@ -31,11 +32,13 @@ class CategoryController extends Controller
     {
         $request->validate([
             'name'=> 'required|unique:categories',
+            'description'=> 'required',
         ]);
 
         $category = Category::create([
             'name'=> $request->name,
             'slug' => \Illuminate\Support\Str::slug($request->name),
+            'description'=> $request->description,
         ]);
 
         return to_route('dashboard.categories.index')->with('success','Category created successfully');
@@ -79,6 +82,8 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        //
+        $category->delete();
+
+        return to_route('dashboard.categories.index')->with('success','Category deleted successfully');
     }
 }

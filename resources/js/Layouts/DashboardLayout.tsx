@@ -72,6 +72,8 @@ import {
 } from "@/Components/ui/sidebar";
 
 import { Toaster } from "@/Components/ui/toaster";
+import { Link, usePage } from "@inertiajs/react";
+import { useToast } from "@/hooks/use-toast";
 
 // This is sample data.
 const data = {
@@ -198,6 +200,27 @@ const data = {
 export default function Page({ children }: { children: React.ReactNode }) {
     const [activeTeam, setActiveTeam] = React.useState(data.teams[0]);
 
+    const flash = usePage().props.flash;
+    const { toast } = useToast(); // useToast hook
+
+    React.useEffect(() => {
+        if (flash.success) {
+            toast({
+                title: "Success",
+                description: flash.success,
+                duration: 2000,
+                variant: "default",
+            });
+        }
+        if (flash.error) {
+            toast({
+                title: "Error",
+                description: flash.error,
+                duration: 2000,
+            });
+        }
+    }, [flash, toast]);
+
     return (
         <SidebarProvider>
             <Sidebar collapsible="icon">
@@ -292,7 +315,7 @@ export default function Page({ children }: { children: React.ReactNode }) {
                                                         <SidebarMenuSubButton
                                                             asChild
                                                         >
-                                                            <a
+                                                            <Link
                                                                 href={
                                                                     subItem.url
                                                                 }
@@ -302,7 +325,7 @@ export default function Page({ children }: { children: React.ReactNode }) {
                                                                         subItem.title
                                                                     }
                                                                 </span>
-                                                            </a>
+                                                            </Link>
                                                         </SidebarMenuSubButton>
                                                     </SidebarMenuSubItem>
                                                 ))}
