@@ -83,7 +83,7 @@ function Create() {
                                                 Back
                                             </Button>
                                         </Link>
-                                        <Button type="submit">Create</Button>
+                                        <Button disabled={processing} type="submit">Create</Button>
                                     </div>
                                 </div>
                             </form>
