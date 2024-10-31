@@ -8,10 +8,11 @@ import { ColumnDef } from "@tanstack/react-table";
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
+import ButtonDelete from "@/Components/Dashboard/ButtonDelete";
 
 function Index({ categories }: { categories: Category[] }) {
     const handleDelete = (id: number) => {
-        router.delete(route("dashboard.categories.destroy", id), {});
+        router.delete(route("dashboard.categories.destroy", id));
     };
 
     const columns: ColumnDef<Category>[] = [
@@ -27,16 +28,12 @@ function Index({ categories }: { categories: Category[] }) {
             header: "Actions",
             id: "actions",
             cell: ({ row }) => (
-                <>
-                    <div className="flex gap-2">
-                        <Button
-                            variant="destructive"
-                            onClick={() => handleDelete(row.original.id)}
-                        >
-                            Delete
-                        </Button>
-                    </div>
-                </>
+                <div className="flex gap-2">
+                    <ButtonDelete
+                        id={row.original.id}
+                        handleDelete={handleDelete}
+                    />
+                </div>
             ),
         },
     ];
