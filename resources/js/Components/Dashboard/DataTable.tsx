@@ -29,6 +29,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/Components/ui/select";
+import ButtonDelete from "./ButtonDelete";
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];

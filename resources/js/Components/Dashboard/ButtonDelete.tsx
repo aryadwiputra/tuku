@@ -10,7 +10,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/Components/ui/alert-dialog";
-import { Button } from "../ui/button";
+import { Button } from "@/Components/ui/button";
 
 interface ButtonDeleteProps {
     id: number;

@@ -27,7 +27,7 @@ function Index({ categories }: { categories: Category[] }) {
                             column.toggleSorting(column.getIsSorted() === "asc")
                         }
                     >
-                        Email
+                        Name
                         <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                 );
@@ -43,7 +43,7 @@ function Index({ categories }: { categories: Category[] }) {
                             column.toggleSorting(column.getIsSorted() === "asc")
                         }
                     >
-                        Email
+                        Slug
                         <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                 );
