@@ -54,6 +54,20 @@ function Index({ categories }: { categories: Category[] }) {
             id: "actions",
             cell: ({ row }) => (
                 <div className="flex gap-2">
+                    {/* Button Edit */}
+                    <Button
+                        variant="outline"
+                        onClick={() =>
+                            router.visit(
+                                route(
+                                    "dashboard.categories.edit",
+                                    row.original.id
+                                )
+                            )
+                        }
+                    >
+                        Edit
+                    </Button>
                     <ButtonDelete
                         id={row.original.id}
                         handleDelete={handleDelete}
@@ -91,7 +105,11 @@ function Index({ categories }: { categories: Category[] }) {
                     </div>
                 </div>
                 <div className="grid">
-                    <DataTable data={categories} columns={columns} filterColumn="name" />
+                    <DataTable
+                        data={categories}
+                        columns={columns}
+                        filterColumn="name"
+                    />
                 </div>
             </div>
         </>

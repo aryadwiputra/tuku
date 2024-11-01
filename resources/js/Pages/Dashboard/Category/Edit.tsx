@@ -16,15 +16,15 @@ import { Textarea } from "@/Components/ui/textarea";
 import InputError from "@/Components/Dashboard/InputError";
 
 function Edit({ category }: any) {
-    const { data, setData, post, processing, errors } = useForm({
-        name: "",
-        description: "",
+    const { data, setData, put, processing, errors } = useForm({
+        name: category.name,
+        description: category.description,
     });
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        post(route("dashboard.categories.store"));
+        put(route("dashboard.categories.update", category.id));
     };
 
     return (
@@ -33,10 +33,20 @@ function Edit({ category }: any) {
                 <div className="grid">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Create Category</CardTitle>
-                            <CardDescription>
-                                Create a new category
-                            </CardDescription>
+                            <div className="inline-flex gap-5">
+                                <Link
+                                    href={route("dashboard.categories.index")}
+                                    className="inline-flex items-center gap-1.5"
+                                >
+                                        <ArrowLeftIcon className="h-4 w-4" />
+                                </Link>
+                                <div className="flex flex-col">
+                                    <CardTitle>Edit {category.name}</CardTitle>
+                                    <CardDescription>
+                                        Edit data category
+                                    </CardDescription>
+                                </div>
+                            </div>
                         </CardHeader>
                         <CardContent>
                             {/* Form */}
@@ -51,6 +61,7 @@ function Edit({ category }: any) {
                                             onChange={(e) =>
                                                 setData("name", e.target.value)
                                             }
+                                            value={data.name}
                                         />
                                         {errors.name && (
                                             <InputError message={errors.name} />
@@ -67,6 +78,7 @@ function Edit({ category }: any) {
                                                     e.target.value
                                                 )
                                             }
+                                            value={data.description}
                                         />
                                         {errors.description && (
                                             <InputError
@@ -76,20 +88,11 @@ function Edit({ category }: any) {
                                     </div>
                                     {/* Submit and Back Button */}
                                     <div className="inline-flex gap-1.5">
-                                        <Link
-                                            href={route(
-                                                "dashboard.categories.index"
-                                            )}
-                                        >
-                                            <Button variant="outline">
-                                                Back
-                                            </Button>
-                                        </Link>
                                         <Button
                                             disabled={processing}
                                             type="submit"
                                         >
-                                            Create
+                                            Update
                                         </Button>
                                     </div>
                                 </div>

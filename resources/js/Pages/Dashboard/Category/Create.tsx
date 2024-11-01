@@ -33,10 +33,20 @@ function Create() {
                 <div className="grid">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Create Category</CardTitle>
-                            <CardDescription>
-                                Create a new category
-                            </CardDescription>
+                            <div className="inline-flex gap-5">
+                                <Link
+                                    href={route("dashboard.categories.index")}
+                                    className="inline-flex items-center gap-1.5"
+                                >
+                                    <ArrowLeftIcon className="h-4 w-4" />
+                                </Link>
+                                <div className="">
+                                    <CardTitle>Create Category</CardTitle>
+                                    <CardDescription>
+                                        Create a new category
+                                    </CardDescription>
+                                </div>
+                            </div>
                         </CardHeader>
                         <CardContent>
                             {/* Form */}
@@ -76,14 +86,12 @@ function Create() {
                                     </div>
                                     {/* Submit and Back Button */}
                                     <div className="inline-flex gap-1.5">
-                                        <Link
-                                            href={route("dashboard.categories.index")}
+                                        <Button
+                                            disabled={processing}
+                                            type="submit"
                                         >
-                                            <Button variant="outline">
-                                                Back
-                                            </Button>
-                                        </Link>
-                                        <Button disabled={processing} type="submit">Create</Button>
+                                            Create
+                                        </Button>
                                     </div>
                                 </div>
                             </form>
