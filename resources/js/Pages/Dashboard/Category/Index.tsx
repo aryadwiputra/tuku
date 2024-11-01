@@ -7,7 +7,7 @@ import { DataTable } from "@/Components/Dashboard/DataTable";
 import { ColumnDef } from "@tanstack/react-table";
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { PlusIcon } from "lucide-react";
+import { ArrowUpDown, PlusIcon } from "lucide-react";
 import ButtonDelete from "@/Components/Dashboard/ButtonDelete";
 
 function Index({ categories }: { categories: Category[] }) {
@@ -18,11 +18,36 @@ function Index({ categories }: { categories: Category[] }) {
     const columns: ColumnDef<Category>[] = [
         {
             accessorKey: "name",
-            header: "Name",
+            // header: "Name",
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() =>
+                            column.toggleSorting(column.getIsSorted() === "asc")
+                        }
+                    >
+                        Email
+                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                    </Button>
+                );
+            },
         },
         {
             accessorKey: "slug",
-            header: "Slug",
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() =>
+                            column.toggleSorting(column.getIsSorted() === "asc")
+                        }
+                    >
+                        Email
+                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                    </Button>
+                );
+            },
         },
         {
             header: "Actions",
@@ -66,11 +91,7 @@ function Index({ categories }: { categories: Category[] }) {
                     </div>
                 </div>
                 <div className="grid">
-                    <DataTable
-                        data={categories}
-                        columns={columns}
-                        filterColumn="name"
-                    />
+                    <DataTable data={categories} columns={columns} filterColumn="name" />
                 </div>
             </div>
         </>

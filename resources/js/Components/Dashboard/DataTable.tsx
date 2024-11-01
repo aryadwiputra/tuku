@@ -1,31 +1,17 @@
-"use client";
-
 import * as React from "react";
+
 import {
     ColumnDef,
-    ColumnFiltersState,
-    SortingState,
-    VisibilityState,
     flexRender,
     getCoreRowModel,
-    getFilteredRowModel,
     getPaginationRowModel,
+    SortingState,
     getSortedRowModel,
+    ColumnFiltersState,
+    getFilteredRowModel,
     useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-    DropdownMenu,
-    DropdownMenuCheckboxItem,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
+
 import {
     Table,
     TableBody,
@@ -33,50 +19,74 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table";
+} from "@/Components/ui/table";
+import { Button } from "@/Components/ui/button";
+import { Input } from "@/Components/ui/input";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/Components/ui/select";
 
-type DataTableProps<TData> = {
+interface DataTableProps<TData, TValue> {
+    columns: ColumnDef<TData, TValue>[];
     data: TData[];
-    columns: ColumnDef<TData>[];
     filterColumn: string;
-};
+}
 
-export function DataTable<TData>({
-    data,
+export function DataTable<TData, TValue>({
     columns,
+    data,
     filterColumn,
-}: DataTableProps<TData>) {
+}: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const [columnFilters, setColumnFilters] =
         React.useState<ColumnFiltersState>([]);
-    const [columnVisibility, setColumnVisibility] =
-        React.useState<VisibilityState>({});
-    const [rowSelection, setRowSelection] = React.useState({});
+    const [pageSize, setPageSize] = React.useState(10); // Default page size
+
+    const defaultColumnSizing = {
+        size: 100,
+        minSize: 10,
+        maxSize: Number.MAX_SAFE_INTEGER,
+    };
 
     const table = useReactTable({
         data,
         columns,
-        onSortingChange: setSorting,
-        onColumnFiltersChange: setColumnFilters,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
+        onSortingChange: setSorting,
         getSortedRowModel: getSortedRowModel(),
+        onColumnFiltersChange: setColumnFilters,
         getFilteredRowModel: getFilteredRowModel(),
-        onColumnVisibilityChange: setColumnVisibility,
-        onRowSelectionChange: setRowSelection,
         state: {
             sorting,
             columnFilters,
-            columnVisibility,
-            rowSelection,
+        },
+        columnResizeMode: "onChange",
+        defaultColumn: {
+            size: defaultColumnSizing.minSize,
+        },
+        initialState: {
+            pagination: {
+                pageSize, // Set initial page size
+            },
         },
     });
 
+    // Handle page size change
+    const handlePageSizeChange = (size: number) => {
+        setPageSize(size);
+        table.setPageSize(size);
+    };
+
     return (
-        <div className="w-full">
-            <div className="flex items-center py-4">
+        <>
+            <div className="flex items-center py-4 gap-2">
                 <Input
-                    placeholder="Filter..."
+                    placeholder="Search..."
                     value={
                         (table
                             .getColumn(filterColumn)
@@ -89,31 +99,25 @@ export function DataTable<TData>({
                     }
                     className="max-w-sm"
                 />
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="ml-auto">
-                            Columns <ChevronDown className="ml-2 h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        {table
-                            .getAllColumns()
-                            .filter((column) => column.getCanHide())
-                            .map((column) => (
-                                <DropdownMenuCheckboxItem
-                                    key={column.id}
-                                    className="capitalize"
-                                    checked={column.getIsVisible()}
-                                    onCheckedChange={(value) =>
-                                        column.toggleVisibility(!!value)
-                                    }
-                                >
-                                    {column.id}
-                                </DropdownMenuCheckboxItem>
-                            ))}
-                    </DropdownMenuContent>
-                </DropdownMenu>
+
+                <Select
+                    value={String(pageSize)}
+                    onValueChange={(value) =>
+                        handlePageSizeChange(Number(value))
+                    }
+                >
+                    <SelectTrigger className="w-[120px]">
+                        <SelectValue placeholder="Rows per page" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="10">10</SelectItem>
+                        <SelectItem value="25">25</SelectItem>
+                        <SelectItem value="50">50</SelectItem>
+                        <SelectItem value="100">100</SelectItem>
+                    </SelectContent>
+                </Select>
             </div>
+
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>
@@ -134,9 +138,14 @@ export function DataTable<TData>({
                         ))}
                     </TableHeader>
                     <TableBody>
-                        {table.getRowModel().rows.length ? (
+                        {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
-                                <TableRow key={row.id}>
+                                <TableRow
+                                    key={row.id}
+                                    data-state={
+                                        row.getIsSelected() && "selected"
+                                    }
+                                >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
                                             {flexRender(
@@ -160,28 +169,36 @@ export function DataTable<TData>({
                     </TableBody>
                 </Table>
             </div>
-            <div className="flex items-center justify-end space-x-2 py-4">
-                <div className="flex-1 text-sm text-muted-foreground">
-                    {table.getFilteredSelectedRowModel().rows.length} of{" "}
-                    {table.getFilteredRowModel().rows.length} row(s) selected.
+
+            {/* Description of the current page and data size */}
+
+            <div className="flex items-center justify-between space-x-2 py-4">
+                <div className="py-4 text-sm text-gray-600">
+                    Showing {table.getRowModel().rows.length} of {data.length}{" "}
+                    data.
+                    {/* You are on page{" "}
+                    {table.getState().pagination.pageIndex + 1} of{" "}
+                    {table.getPageCount()} pages with a page size of {pageSize}. */}
                 </div>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.previousPage()}
-                    disabled={!table.getCanPreviousPage()}
-                >
-                    Previous
-                </Button>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.nextPage()}
-                    disabled={!table.getCanNextPage()}
-                >
-                    Next
-                </Button>
+                <div className="flex gap-2">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => table.previousPage()}
+                        disabled={!table.getCanPreviousPage()}
+                    >
+                        Previous
+                    </Button>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => table.nextPage()}
+                        disabled={!table.getCanNextPage()}
+                    >
+                        Next
+                    </Button>
+                </div>
             </div>
-        </div>
+        </>
     );
 }
