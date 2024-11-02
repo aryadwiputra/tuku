@@ -15,15 +15,18 @@ import {
     Forward,
     Frame,
     GalleryVerticalEnd,
+    Group,
     LogOut,
     Map,
     MoreHorizontal,
     PieChart,
     Plus,
     Settings2,
+    Shield,
     Sparkles,
     SquareTerminal,
     Trash2,
+    UserIcon,
 } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
@@ -115,6 +118,18 @@ const data = {
                 },
             ],
         },
+    ],
+    roleAccess: [
+        {
+            name: "Roles",
+            url: "#",
+            icon: Group,
+        },
+        {
+            name: "Permissions",
+            url: "#",
+            icon: Shield,
+        }
     ],
 };
 
@@ -255,6 +270,56 @@ export default function Page({ children }: { children: React.ReactNode }) {
                                     </SidebarMenuItem>
                                 </Collapsible>
                             ))}
+                        </SidebarMenu>
+                    </SidebarGroup>
+                    <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+                        <SidebarGroupLabel>Role Access</SidebarGroupLabel>
+                        <SidebarMenu>
+                            {data.roleAccess.map((item) => (
+                                <SidebarMenuItem key={item.name}>
+                                    <SidebarMenuButton asChild>
+                                        <a href={item.url}>
+                                            <item.icon />
+                                            <span>{item.name}</span>
+                                        </a>
+                                    </SidebarMenuButton>
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <SidebarMenuAction showOnHover>
+                                                <MoreHorizontal />
+                                                <span className="sr-only">
+                                                    More
+                                                </span>
+                                            </SidebarMenuAction>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent
+                                            className="w-48 rounded-lg"
+                                            side="bottom"
+                                            align="end"
+                                        >
+                                            <DropdownMenuItem>
+                                                <Folder className="text-muted-foreground" />
+                                                <span>View Project</span>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem>
+                                                <Forward className="text-muted-foreground" />
+                                                <span>Share Project</span>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuItem>
+                                                <Trash2 className="text-muted-foreground" />
+                                                <span>Delete Project</span>
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                </SidebarMenuItem>
+                            ))}
+                            <SidebarMenuItem>
+                                <SidebarMenuButton className="text-sidebar-foreground/70">
+                                    <MoreHorizontal className="text-sidebar-foreground/70" />
+                                    <span>More</span>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
                         </SidebarMenu>
                     </SidebarGroup>
                 </SidebarContent>
