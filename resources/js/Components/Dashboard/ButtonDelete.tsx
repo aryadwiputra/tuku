@@ -20,7 +20,7 @@ interface ButtonDeleteProps {
 function ButtonDelete({ id, handleDelete }: ButtonDeleteProps) {
     return (
         <AlertDialog>
-            <AlertDialogTrigger>
+            <AlertDialogTrigger asChild>
                 <Button variant="destructive">Delete</Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
