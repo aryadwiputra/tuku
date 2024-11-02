@@ -122,7 +122,7 @@ const data = {
     roleAccess: [
         {
             name: "Roles",
-            url: "#",
+            url: route("dashboard.roles.index"),
             icon: Group,
         },
         {

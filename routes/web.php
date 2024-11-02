@@ -20,6 +20,7 @@ Route::get('/dashboard', function () {
 
 Route::middleware('auth')->as('dashboard')->name('dashboard.')->prefix('dashboard')->group(function () {
     Route::resource('categories', \App\Http\Controllers\CategoryController::class);
+    Route::resource('roles', \App\Http\Controllers\RoleController::class);
 });
 
 Route::middleware('auth')->group(function () {
