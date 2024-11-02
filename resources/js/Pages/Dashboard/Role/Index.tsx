@@ -9,6 +9,8 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown, PlusIcon } from "lucide-react";
 import ButtonDelete from "@/Components/Dashboard/ButtonDelete";
+import Checkbox from "@/Components/Checkbox";
+import { Badge } from "@/Components/ui/badge";
 
 function Index({ roles }: { roles: Role[] }) {
     const handleDelete = (id: number) => {
@@ -50,6 +52,20 @@ function Index({ roles }: { roles: Role[] }) {
             },
         },
         {
+            accessorKey: "permissions",
+            header: "Permissions",
+            cell: ({ row }) => (
+                <div className="flex flex-wrap gap-2">
+                    {row.original.permissions.map((permission) => (
+                        // <span key={permission.id} className="mr-2">
+                        //     {permission.name}
+                        // </span>
+                        <Badge  key={permission.id}>{permission.name}</Badge>
+                    ))}
+                </div>
+            ),
+        },
+        {
             header: "Actions",
             id: "actions",
             cell: ({ row }) => (
@@ -87,7 +103,6 @@ function Index({ roles }: { roles: Role[] }) {
                             Manage your roles
                         </p>
                     </div>
-                    {/* Create Role button */}
                     <div className="ml-auto">
                         <Button
                             onClick={() =>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import DashboardLayout from "@/Layouts/DashboardLayout";
 import { Button } from "@/Components/ui/button";
 import { Head, Link, router, useForm, usePage } from "@inertiajs/react";
@@ -15,36 +15,36 @@ import { Input } from "@/Components/ui/input";
 import InputError from "@/Components/Dashboard/InputError";
 import Checkbox from "@/Components/Checkbox";
 
-function Create({ permissions }: { permissions: Permission[] }) {
+function Edit({ permissions }: { permissions: Permission[] }) {
+    const { role } = usePage().props; // Access role data from props
+
     // Use the Inertia `useForm` hook for form data management
-    const { data, setData, post, processing, errors } = useForm({
-        name: "",
-        permissions: [],
+    const { data, setData, put, processing, errors } = useForm({
+        name: role.name || "",
+        permissions: role.permissions.map((perm) => perm.id) || [],
     });
 
-    // Function to handle form submission
+    // Handle form submission
     const handleSubmit = (e) => {
         e.preventDefault();
-        post(route("dashboard.roles.store")); // Submit the form using Inertia
+        put(route("dashboard.roles.update", role.id)); // Update role
     };
 
-    // Function to handle checkbox changes
+    // Handle checkbox changes
     const handleCheckboxChange = (id) => {
         if (data.permissions.includes(id)) {
-            // Remove the permission if it's already selected
             setData(
                 "permissions",
                 data.permissions.filter((permission) => permission !== id)
             );
         } else {
-            // Add the permission if it's not selected
             setData("permissions", [...data.permissions, id]);
         }
     };
 
     return (
         <>
-            <Head title="Create Role" />
+            <Head title="Edit Role" />
 
             <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
                 <div className="grid">
@@ -58,9 +58,9 @@ function Create({ permissions }: { permissions: Permission[] }) {
                                     <ArrowLeftIcon className="h-4 w-4" />
                                 </Link>
                                 <div>
-                                    <CardTitle>Create Role</CardTitle>
+                                    <CardTitle>Edit Role</CardTitle>
                                     <CardDescription>
-                                        Create a new role
+                                        Edit role details
                                     </CardDescription>
                                 </div>
                             </div>
@@ -128,7 +128,7 @@ function Create({ permissions }: { permissions: Permission[] }) {
                                             type="submit"
                                             disabled={processing}
                                         >
-                                            Create
+                                            Save Changes
                                         </Button>
                                     </div>
                                 </div>
@@ -142,8 +142,8 @@ function Create({ permissions }: { permissions: Permission[] }) {
 }
 
 // Set the layout for the page
-Create.layout = (page: React.ReactNode) => (
+Edit.layout = (page: React.ReactNode) => (
     <DashboardLayout>{page}</DashboardLayout>
 );
 
-export default Create;
+export default Edit;

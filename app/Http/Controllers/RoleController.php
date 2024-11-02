@@ -14,7 +14,9 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $roles = Role::all();
+        // $roles = Role::with('permissions')->col();
+        // Collect roles with permissions
+        $roles = Role::with("permissions")->get();
 
         return Inertia::render('Dashboard/Role/Index', compact('roles'));
         
@@ -35,7 +37,18 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name'=> 'required|unique:roles',
+            'permissions'=> 'required',
+        ]);
+
+        $role = Role::create([
+            'name' => $request->name,
+        ]);
+
+        $role->permissions()->sync($request->permissions);
+
+        return to_route('dashboard.roles.index')->with('success','Role created successfully');
     }
 
     /**
@@ -51,15 +64,33 @@ class RoleController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $role = Role::with('permissions')->findOrFail($id);
+
+        $permissions = Permission::all();
+    
+        return Inertia::render('Dashboard/Role/Edit', compact('role', 'permissions'));
     }
+
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'name'=> 'required|unique:roles,name,'.$id,
+            'permissions'=> 'required',
+        ]);
+
+        $role = Role::findOrFail($id);
+
+        $role->update([
+            'name' => $request->name,
+        ]);
+
+        $role->permissions()->sync($request->permissions);
+
+        return to_route('dashboard.roles.index')->with('success','');
     }
 
     /**
@@ -67,6 +98,15 @@ class RoleController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $role = Role::findOrFail($id);
+        
+        if($role->name == 'Super Admin' || $role->name == 'User'){
+            return to_route('dashboard.roles.index')->with('error','Cannot delete this role');
+        }else{
+   
+            $role->delete();
+            
+            return to_route('dashboard.roles.index')->with('success','');
+        }
     }
 }

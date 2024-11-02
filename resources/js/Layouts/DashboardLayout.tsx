@@ -153,6 +153,7 @@ export default function Page({ children }: { children: React.ReactNode }) {
                 title: "Error",
                 description: flash.error,
                 duration: 2000,
+                variant: "destructive", 
             });
         }
     }, [flash, toast]);
