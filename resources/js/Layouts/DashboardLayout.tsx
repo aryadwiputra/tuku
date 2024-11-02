@@ -129,7 +129,12 @@ const data = {
             name: "Permissions",
             url: "#",
             icon: Shield,
-        }
+        },
+        {
+            name: "Users",
+            url: route("dashboard.users.index"),
+            icon: UserIcon,
+        },
     ],
 };
 
@@ -153,7 +158,7 @@ export default function Page({ children }: { children: React.ReactNode }) {
                 title: "Error",
                 description: flash.error,
                 duration: 2000,
-                variant: "destructive", 
+                variant: "destructive",
             });
         }
     }, [flash, toast]);
@@ -279,40 +284,11 @@ export default function Page({ children }: { children: React.ReactNode }) {
                             {data.roleAccess.map((item) => (
                                 <SidebarMenuItem key={item.name}>
                                     <SidebarMenuButton asChild>
-                                        <a href={item.url}>
+                                        <Link href={item.url}>
                                             <item.icon />
                                             <span>{item.name}</span>
-                                        </a>
+                                        </Link>
                                     </SidebarMenuButton>
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <SidebarMenuAction showOnHover>
-                                                <MoreHorizontal />
-                                                <span className="sr-only">
-                                                    More
-                                                </span>
-                                            </SidebarMenuAction>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent
-                                            className="w-48 rounded-lg"
-                                            side="bottom"
-                                            align="end"
-                                        >
-                                            <DropdownMenuItem>
-                                                <Folder className="text-muted-foreground" />
-                                                <span>View Project</span>
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem>
-                                                <Forward className="text-muted-foreground" />
-                                                <span>Share Project</span>
-                                            </DropdownMenuItem>
-                                            <DropdownMenuSeparator />
-                                            <DropdownMenuItem>
-                                                <Trash2 className="text-muted-foreground" />
-                                                <span>Delete Project</span>
-                                            </DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
                                 </SidebarMenuItem>
                             ))}
                             <SidebarMenuItem>
