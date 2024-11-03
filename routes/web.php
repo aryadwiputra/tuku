@@ -21,6 +21,8 @@ Route::get('/dashboard', function () {
 Route::middleware('auth')->as('dashboard')->name('dashboard.')->prefix('dashboard')->group(function () {
     Route::resource('categories', \App\Http\Controllers\CategoryController::class);
     Route::resource('roles', \App\Http\Controllers\RoleController::class);
+    // Invokable controller of permissions
+    Route::get('permissions', \App\Http\Controllers\PermissionController::class)->name('permissions.index');
     Route::resource('users', \App\Http\Controllers\UserController::class);
 });
 

@@ -137,7 +137,7 @@ const data = {
         },
         {
             name: "Permissions",
-            url: "#",
+            url: route('dashboard.permissions.index'),
             icon: Shield,
         },
         {
