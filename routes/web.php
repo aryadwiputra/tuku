@@ -13,12 +13,8 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
-
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
 Route::middleware('auth')->as('dashboard')->name('dashboard.')->prefix('dashboard')->group(function () {
+    Route::get('/', \App\Http\Controllers\DashboardController::class)->name('index');
     Route::resource('categories', \App\Http\Controllers\CategoryController::class);
     Route::resource('roles', \App\Http\Controllers\RoleController::class);
     // Invokable controller of permissions

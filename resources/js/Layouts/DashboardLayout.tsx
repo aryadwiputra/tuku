@@ -243,7 +243,7 @@ export default function Page({ children }: { children: React.ReactNode }) {
                         <SidebarMenu>
                             <SidebarMenuItem>
                                 <SidebarMenuButton asChild>
-                                    <Link href={route("dashboard")}>
+                                    <Link href={route("dashboard.index")}>
                                         <HomeIcon />
                                         <span>Dashboard</span>
                                     </Link>
