@@ -16,8 +16,6 @@ function Index({ users }: { users: User[] }) {
         router.delete(route("dashboard.users.destroy", id));
     };
 
-    console.log(users)
-
     const columns: ColumnDef<User>[] = [
         {
             accessorKey: "name",
@@ -54,15 +52,12 @@ function Index({ users }: { users: User[] }) {
         },
         {
             accessorKey: "Roles",
-            cell: ({ row }) => 
-                {
-                    return row.original.roles.map((role) => (
-                        // <Badge key={role.id}>{role.name}</Badge>
-                        <p>
-                            {role.name}
-                        </p>
-                    ));
-                },
+            cell: ({ row }) => {
+                return row.original.roles.map((role) => (
+                    // <Badge key={role.id}>{role.name}</Badge>
+                    <p key={role.id}>{role.name}</p>
+                ));
+            },
         },
         {
             header: "Actions",
