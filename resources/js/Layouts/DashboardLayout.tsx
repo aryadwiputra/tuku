@@ -137,7 +137,7 @@ const data = {
         },
         {
             name: "Permissions",
-            url: route('dashboard.permissions.index'),
+            url: route("dashboard.permissions.index"),
             icon: Shield,
         },
         {
@@ -153,6 +153,8 @@ export default function Page({ children }: { children: React.ReactNode }) {
 
     const flash = usePage().props.flash;
     const { toast } = useToast(); // useToast hook
+
+    const auth = usePage().props.auth;
 
     React.useEffect(() => {
         if (flash.success) {
@@ -175,65 +177,25 @@ export default function Page({ children }: { children: React.ReactNode }) {
 
     return (
         <SidebarProvider>
-            <Sidebar collapsible="icon">
+            <Sidebar>
                 <SidebarHeader>
                     <SidebarMenu>
                         <SidebarMenuItem>
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <SidebarMenuButton
-                                        size="lg"
-                                        className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-                                    >
-                                        <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                                            <activeTeam.logo className="size-4" />
-                                        </div>
-                                        <div className="grid flex-1 text-left text-sm leading-tight">
-                                            <span className="truncate font-semibold">
-                                                {activeTeam.name}
-                                            </span>
-                                            <span className="truncate text-xs">
-                                                {activeTeam.plan}
-                                            </span>
-                                        </div>
-                                        <ChevronsUpDown className="ml-auto" />
-                                    </SidebarMenuButton>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent
-                                    className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-                                    align="start"
-                                    side="bottom"
-                                    sideOffset={4}
-                                >
-                                    <DropdownMenuLabel className="text-xs text-muted-foreground">
-                                        Teams
-                                    </DropdownMenuLabel>
-                                    {data.teams.map((team, index) => (
-                                        <DropdownMenuItem
-                                            key={team.name}
-                                            onClick={() => setActiveTeam(team)}
-                                            className="gap-2 p-2"
-                                        >
-                                            <div className="flex size-6 items-center justify-center rounded-sm border">
-                                                <team.logo className="size-4 shrink-0" />
-                                            </div>
-                                            {team.name}
-                                            <DropdownMenuShortcut>
-                                                ⌘{index + 1}
-                                            </DropdownMenuShortcut>
-                                        </DropdownMenuItem>
-                                    ))}
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem className="gap-2 p-2">
-                                        <div className="flex size-6 items-center justify-center rounded-md border bg-background">
-                                            <Plus className="size-4" />
-                                        </div>
-                                        <div className="font-medium text-muted-foreground">
-                                            Add team
-                                        </div>
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
+                            <SidebarMenuButton size="lg" asChild>
+                                <Link href={route("dashboard.index")}>
+                                    <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                                        <Command className="size-4" />
+                                    </div>
+                                    <div className="grid flex-1 text-left text-sm leading-tight">
+                                        <span className="truncate font-semibold">
+                                            Tuku
+                                        </span>
+                                        <span className="truncate text-xs">
+                                            App Dashboard
+                                        </span>
+                                    </div>
+                                </Link>
+                            </SidebarMenuButton>
                         </SidebarMenuItem>
                     </SidebarMenu>
                 </SidebarHeader>
@@ -297,15 +259,20 @@ export default function Page({ children }: { children: React.ReactNode }) {
                                                 alt={data.user.name}
                                             />
                                             <AvatarFallback className="rounded-lg">
-                                                CN
+                                                {/* Pisahkan jika ada spasi, dan gunakan huruf depan nya */}
+                                                {data.user.name
+                                                    .split(" ")
+                                                    .slice(0, 2)
+                                                    .map((word) => word[0])
+                                                    .join("")}
                                             </AvatarFallback>
                                         </Avatar>
                                         <div className="grid flex-1 text-left text-sm leading-tight">
                                             <span className="truncate font-semibold">
-                                                {data.user.name}
+                                                {auth.user.name}
                                             </span>
                                             <span className="truncate text-xs">
-                                                {data.user.email}
+                                                {auth.user.email}
                                             </span>
                                         </div>
                                         <ChevronsUpDown className="ml-auto size-4" />
@@ -325,20 +292,25 @@ export default function Page({ children }: { children: React.ReactNode }) {
                                                     alt={data.user.name}
                                                 />
                                                 <AvatarFallback className="rounded-lg">
-                                                    CN
+                                                    {/* Pisahkan jika ada spasi, dan gunakan huruf depan nya */}
+                                                    {data.user.name
+                                                        .split(" ")
+                                                        .slice(0, 2)
+                                                        .map((word) => word[0])
+                                                        .join("")}
                                                 </AvatarFallback>
                                             </Avatar>
                                             <div className="grid flex-1 text-left text-sm leading-tight">
                                                 <span className="truncate font-semibold">
-                                                    {data.user.name}
+                                                    {auth.user.name}
                                                 </span>
                                                 <span className="truncate text-xs">
-                                                    {data.user.email}
+                                                    {auth.user.email}
                                                 </span>
                                             </div>
                                         </div>
                                     </DropdownMenuLabel>
-                                    <DropdownMenuSeparator />
+                                    {/* <DropdownMenuSeparator />
                                     <DropdownMenuGroup>
                                         <DropdownMenuItem>
                                             <Sparkles />
@@ -359,7 +331,7 @@ export default function Page({ children }: { children: React.ReactNode }) {
                                             <Bell />
                                             Notifications
                                         </DropdownMenuItem>
-                                    </DropdownMenuGroup>
+                                    </DropdownMenuGroup> */}
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem
                                         onClick={() =>
@@ -380,7 +352,7 @@ export default function Page({ children }: { children: React.ReactNode }) {
                 <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
                     <div className="flex items-center gap-2 px-4">
                         <SidebarTrigger className="-ml-1" />
-                        <Separator
+                        {/* <Separator
                             orientation="vertical"
                             className="mr-2 h-4"
                         />
@@ -398,7 +370,7 @@ export default function Page({ children }: { children: React.ReactNode }) {
                                     </BreadcrumbPage>
                                 </BreadcrumbItem>
                             </BreadcrumbList>
-                        </Breadcrumb>
+                        </Breadcrumb> */}
                     </div>
                 </header>
                 <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
