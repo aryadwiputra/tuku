@@ -81,6 +81,7 @@ import { Toaster } from "@/Components/ui/toaster";
 import { Link, router, usePage } from "@inertiajs/react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/Components/ui/button";
+import hasAnyPermission from "@/Utils/Permissions";
 
 // const { auth } = usePage().props;
 
@@ -200,19 +201,21 @@ export default function Page({ children }: { children: React.ReactNode }) {
                     </SidebarMenu>
                 </SidebarHeader>
                 <SidebarContent>
-                    <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-                        <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
-                        <SidebarMenu>
-                            <SidebarMenuItem>
-                                <SidebarMenuButton asChild>
-                                    <Link href={route("dashboard.index")}>
-                                        <HomeIcon />
-                                        <span>Dashboard</span>
-                                    </Link>
-                                </SidebarMenuButton>
-                            </SidebarMenuItem>
-                        </SidebarMenu>
-                    </SidebarGroup>
+                    {hasAnyPermission(["dashboard-access"]) && (
+                        <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+                            <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
+                            <SidebarMenu>
+                                <SidebarMenuItem>
+                                    <SidebarMenuButton asChild>
+                                        <Link href={route("dashboard.index")}>
+                                            <HomeIcon />
+                                            <span>Dashboard</span>
+                                        </Link>
+                                    </SidebarMenuButton>
+                                </SidebarMenuItem>
+                            </SidebarMenu>
+                        </SidebarGroup>
+                    )}
                     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
                         <SidebarGroupLabel>Core</SidebarGroupLabel>
                         <SidebarMenu>
