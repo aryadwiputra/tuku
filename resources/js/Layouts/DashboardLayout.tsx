@@ -16,6 +16,8 @@ import {
     Frame,
     GalleryVerticalEnd,
     Group,
+    HomeIcon,
+    ListTree,
     LogOut,
     Map,
     MoreHorizontal,
@@ -26,6 +28,7 @@ import {
     Sparkles,
     SquareTerminal,
     Trash2,
+    Trees,
     UserIcon,
 } from "lucide-react";
 
@@ -117,6 +120,13 @@ const data = {
                     url: route("dashboard.categories.index"),
                 },
             ],
+        },
+    ],
+    core: [
+        {
+            name: "Categories",
+            url: route("dashboard.categories.index"),
+            icon: ListTree,
         },
     ],
     roleAccess: [
@@ -228,53 +238,31 @@ export default function Page({ children }: { children: React.ReactNode }) {
                     </SidebarMenu>
                 </SidebarHeader>
                 <SidebarContent>
-                    <SidebarGroup>
-                        <SidebarGroupLabel>Platform</SidebarGroupLabel>
+                    <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+                        <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
                         <SidebarMenu>
-                            {data.navMain.map((item) => (
-                                <Collapsible
-                                    key={item.title}
-                                    asChild
-                                    defaultOpen={item.isActive}
-                                    className="group/collapsible"
-                                >
-                                    <SidebarMenuItem>
-                                        <CollapsibleTrigger asChild>
-                                            <SidebarMenuButton
-                                                tooltip={item.title}
-                                            >
-                                                {item.icon && <item.icon />}
-                                                <span>{item.title}</span>
-                                                <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                                            </SidebarMenuButton>
-                                        </CollapsibleTrigger>
-                                        <CollapsibleContent>
-                                            <SidebarMenuSub>
-                                                {item.items?.map((subItem) => (
-                                                    <SidebarMenuSubItem
-                                                        key={subItem.title}
-                                                    >
-                                                        <SidebarMenuSubButton
-                                                            asChild
-                                                        >
-                                                            <Link
-                                                                href={
-                                                                    subItem.url
-                                                                }
-                                                            >
-                                                                <span>
-                                                                    {
-                                                                        subItem.title
-                                                                    }
-                                                                </span>
-                                                            </Link>
-                                                        </SidebarMenuSubButton>
-                                                    </SidebarMenuSubItem>
-                                                ))}
-                                            </SidebarMenuSub>
-                                        </CollapsibleContent>
-                                    </SidebarMenuItem>
-                                </Collapsible>
+                            <SidebarMenuItem>
+                                <SidebarMenuButton asChild>
+                                    <Link href={route("dashboard")}>
+                                        <HomeIcon />
+                                        <span>Dashboard</span>
+                                    </Link>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
+                        </SidebarMenu>
+                    </SidebarGroup>
+                    <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+                        <SidebarGroupLabel>Core</SidebarGroupLabel>
+                        <SidebarMenu>
+                            {data.core.map((item) => (
+                                <SidebarMenuItem key={item.name}>
+                                    <SidebarMenuButton asChild>
+                                        <Link href={item.url}>
+                                            <item.icon />
+                                            <span>{item.name}</span>
+                                        </Link>
+                                    </SidebarMenuButton>
+                                </SidebarMenuItem>
                             ))}
                         </SidebarMenu>
                     </SidebarGroup>
@@ -291,12 +279,6 @@ export default function Page({ children }: { children: React.ReactNode }) {
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
                             ))}
-                            <SidebarMenuItem>
-                                <SidebarMenuButton className="text-sidebar-foreground/70">
-                                    <MoreHorizontal className="text-sidebar-foreground/70" />
-                                    <span>More</span>
-                                </SidebarMenuButton>
-                            </SidebarMenuItem>
                         </SidebarMenu>
                     </SidebarGroup>
                 </SidebarContent>
