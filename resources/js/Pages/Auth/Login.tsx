@@ -29,14 +29,14 @@ export default function LoginPage() {
                     <div className="mx-auto w-full max-w-sm lg:w-96">
                         <div>
                             {/* < className="h-10 w-auto" /> */}
-                            <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+                            <Label className="mt-6 text-3xl font-extrabold">
                                 Sign in to your account
-                            </h2>
-                            <p className="mt-2 text-sm text-gray-600">
+                            </Label>
+                            <p className="mt-2 text-sm dark:white">
                                 Or{" "}
                                 <Link
-                                    href={route('register')}
-                                    className="font-medium text-primary hover:text-primary/90"
+                                    href={route("register")}
+                                    className="font-medium text-primary hover:text-primary/90 underline"
                                 >
                                     register for an account
                                 </Link>
@@ -49,7 +49,7 @@ export default function LoginPage() {
                                     <div>
                                         <Label
                                             htmlFor="email"
-                                            className="block text-sm font-medium text-gray-700"
+                                            className="block text-sm font-medium"
                                         >
                                             Email address
                                         </Label>
@@ -66,7 +66,7 @@ export default function LoginPage() {
                                                         e.target.value
                                                     );
                                                 }}
-                                                className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-primary focus:outline-none focus:ring-primary sm:text-sm"
+                                                className="block w-full appearance-none rounded-md border  px-3 py-2 shadow-sm  sm:text-sm"
                                             />
                                             {errors.email && (
                                                 <InputError
@@ -97,7 +97,7 @@ export default function LoginPage() {
                                                         e.target.value
                                                     );
                                                 }}
-                                                className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-primary focus:outline-none focus:ring-primary sm:text-sm"
+                                                className="block w-full appearance-none rounded-md border  px-3 py-2 shadow-sm  sm:text-sm"
                                             />
                                             {errors.password && (
                                                 <InputError
@@ -124,7 +124,7 @@ export default function LoginPage() {
                                             />
                                             <Label
                                                 htmlFor="remember-me"
-                                                className="ml-2 block text-sm text-gray-900"
+                                                className="ml-2 block text-sm "
                                             >
                                                 Remember me
                                             </Label>
