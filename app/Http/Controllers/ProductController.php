@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -44,6 +45,7 @@ class ProductController extends Controller
             'price'=> 'required',
             'stock' => 'required',
             'thumbnail' => 'required',
+            'images'=> 'required|array',
         ]);
 
         $category = Category::where('name', $request->category_id)->first();
@@ -63,7 +65,7 @@ class ProductController extends Controller
             $slug = $request->name . '-' . \Illuminate\Support\Str::random(6);
         }
 
-        Product::create([
+        $product = Product::create([
             'category_id'=> $category->id,
             'user_id' => Auth::user()->id,
             'name'=> $request->name,
@@ -73,6 +75,24 @@ class ProductController extends Controller
             'stock' => $request->stock,
             'thumbnail' => $filename,
         ]);
+
+        if($product)
+        {
+            $images = $request->images;
+
+            foreach($images as $image)
+            {
+                $newImage = new ProductImage();
+
+                $filename = time().'.'.$image->getClientOriginalExtension();
+
+                $image->storeAs('product/images', $filename, 'public');
+
+                $newImage->product_id = $product->id;
+                $newImage->image = $filename;
+                $newImage->save();
+            }
+        }
 
         return to_route('dashboard.products.index')->with('success','Product created successfully');
     }
@@ -90,7 +110,7 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        $product = Product::where('id', $product->id)->with(['category', 'user'])->first();
+        $product = Product::where('id', $product->id)->with(['category', 'user', 'images'])->first();
 
         $categories = Category::all();
 
@@ -146,6 +166,43 @@ class ProductController extends Controller
             ]);
         }
 
+        if ($request->hasFile('images')) {
+            // Delete existing images
+            foreach ($product->images as $image) {
+                Storage::disk('public')->delete('product/images/' . $image->image);
+                $image->delete();
+            }
+        
+            // Store new images
+            foreach ($request->images as $image) {
+                $filename = time() . '.' . $image->getClientOriginalExtension();
+                $image->storeAs('product/images', $filename, 'public');
+                ProductImage::create([
+                    'product_id' => $product->id,
+                    'image' => $filename,
+                ]);
+            }
+        }
+
+        if($request->images){
+            
+            // Storage::disk('public')->delete('product/images/'.$product->thumbnail);
+
+            // $image = $request->images;
+
+            // $filename = time().'.'.$image->getClientOriginalExtension();
+
+            // $image->storeAs('product/images', $filename, 'public');
+
+            // $productImage = ProductImage::where('product_id', $product->id)->first();
+
+            // foreach($request->images as $image){
+            //     $productImage->update([
+            //         'image' => $filename,
+            //     ]);
+            // }
+        }
+
         return to_route('dashboard.products.index')->with('success','Product updated successfully');
     }
 
@@ -156,8 +213,51 @@ class ProductController extends Controller
     {
         Storage::disk('public')->delete('product/thumbnails/'.$product->thumbnail);
 
+        if( $product->images ){
+            foreach($product->images as $image){
+                Storage::disk('public')->delete('product/images/'.$image->image);
+            }
+        }
+        
         $product->delete();
+        
 
         return to_route('dashboard.products.index')->with('success','Product deleted successfully');
+    }
+
+    /**
+     * Add image
+     */
+    public function addImage(Request $request, $id){
+        $product = Product::find($id);
+
+        if($request->hasFile('image')) {
+            $image = $request->file('image');
+            $filename = time().'.'.$request->image->getClientOriginalExtension();
+
+            $image->storeAs('product/images', $filename, 'public');
+            
+            $image = ProductImage::create([
+                'product_id' => $product->id,
+                'image' => $filename,
+            ]);
+            
+            return to_route('dashboard.products.edit', $id)->with('success','Product image added successfully');
+        }
+    }
+
+    /**
+     * Delete product image
+     */
+    public function deleteImage($id, $imageId)
+    {
+        $productImage = ProductImage::where('id', $imageId)->first();
+    
+        if ($productImage) {
+            Storage::disk('public')->delete('product/images/' . $productImage->image);
+            $productImage->delete();
+        }
+    
+        return to_route('dashboard.products.edit', $id)->with('success', 'Product image deleted');
     }
 }

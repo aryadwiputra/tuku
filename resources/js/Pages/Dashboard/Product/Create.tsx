@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import DashboardLayout from "@/Layouts/DashboardLayout";
 import { Button } from "@/Components/ui/button";
 import { Head, Link, router, useForm, usePage } from "@inertiajs/react";
-import { ArrowLeft, ArrowLeftIcon } from "lucide-react";
+import { ArrowLeft, ArrowLeftIcon, Plus, X } from "lucide-react";
 import {
     Card,
     CardContent,
@@ -42,9 +42,36 @@ function Create({ categories }: Props) {
         thumbnail: "",
         price: "",
         stock: "",
+        images: [],
     });
 
-    console.log(categories);
+    const [previewImages, setPreviewImages] = useState<string[]>([]);
+
+    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            const newImages = Array.from(e.target.files);
+            setData("images", [...data.images, ...newImages]);
+
+            newImages.forEach((image) => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setPreviewImages((prev) => [
+                        ...prev,
+                        reader.result as string,
+                    ]);
+                };
+                reader.readAsDataURL(image);
+            });
+        }
+    };
+
+    const removeImage = (index: number) => {
+        setData(
+            "images",
+            data.images.filter((_, i) => i !== index)
+        );
+        setPreviewImages(previewImages.filter((_, i) => i !== index));
+    };
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -230,11 +257,59 @@ function Create({ categories }: Props) {
                                                 />
                                             )}
                                         </div>
+                                        <div className="mt-4">
+                                            <Label>Product Images</Label>
+                                            <div className="flex flex-wrap gap-4 mt-2">
+                                                {previewImages.map(
+                                                    (image, index) => (
+                                                        <div
+                                                            key={index}
+                                                            className="relative"
+                                                        >
+                                                            <img
+                                                                src={image}
+                                                                alt={`Preview ${index}`}
+                                                                className="w-24 h-24 object-cover rounded"
+                                                            />
+                                                            <button
+                                                                type="button"
+                                                                onClick={() =>
+                                                                    removeImage(
+                                                                        index
+                                                                    )
+                                                                }
+                                                                className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+                                                            >
+                                                                <X className="w-4 h-4" />
+                                                            </button>
+                                                        </div>
+                                                    )
+                                                )}
+                                                <label className="w-24 h-24 flex items-center justify-center border-2 border-dashed border-gray-300 rounded cursor-pointer">
+                                                    <input
+                                                        type="file"
+                                                        multiple
+                                                        onChange={
+                                                            handleImageUpload
+                                                        }
+                                                        className="hidden"
+                                                        accept="image/*"
+                                                    />
+                                                    <Plus className="w-8 h-8 text-gray-400" />
+                                                </label>
+                                            </div>
+                                            {errors.images && (
+                                                <InputError
+                                                    message={errors.images}
+                                                />
+                                            )}
+                                        </div>
                                         {/* Submit and Back Button */}
                                         <div className="inline-flex gap-1.5">
                                             <Button
                                                 disabled={processing}
                                                 type="submit"
+                                                className="mt-4"
                                             >
                                                 Create
                                             </Button>
