@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class ProductController extends Controller
@@ -34,7 +37,44 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'category_id'=> 'required',
+            'name'=> 'required',
+            'description'=> 'required',
+            'price'=> 'required',
+            'stock' => 'required',
+            'thumbnail' => 'required',
+        ]);
+
+        $category = Category::where('name', $request->category_id)->first();
+
+        $file = $request->file('thumbnail');
+
+        $filename = time().'.'.$file->getClientOriginalExtension();
+
+        $file->storeAs('product/thumbnails', $filename, 'public');
+
+        // Generate a unique slug
+        $slug = $request->name . '-' .  \Illuminate\Support\Str::random(6);
+
+        // Check if the slug already exists
+        while (Product::where('slug', $slug)->exists()) {
+            // Generate a new random slug if it already exists
+            $slug = $request->name . '-' . \Illuminate\Support\Str::random(6);
+        }
+
+        Product::create([
+            'category_id'=> $category->id,
+            'user_id' => Auth::user()->id,
+            'name'=> $request->name,
+            'slug' => \Illuminate\Support\Str::slug($slug),
+            'description'=> $request->description,
+            'price'=> $request->price,
+            'stock' => $request->stock,
+            'thumbnail' => $filename,
+        ]);
+
+        return to_route('dashboard.products.index')->with('success','Product created successfully');
     }
 
     /**
@@ -66,6 +106,10 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        //
+        Storage::disk('public')->delete('product/thumbnails/'.$product->thumbnail);
+
+        $product->delete();
+
+        return to_route('dashboard.products.index')->with('success','Product deleted successfully');
     }
 }

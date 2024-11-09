@@ -14,6 +14,7 @@ type Product = {
     id: number;
     name: string;
     slug: string;
+    thumbnail: string;
 };
 
 function Index({ products }: { products: Product[] }) {
@@ -22,6 +23,19 @@ function Index({ products }: { products: Product[] }) {
     };
 
     const columns: ColumnDef<Product>[] = [
+        {
+            accessorKey: "thumbnail",
+            header: "Thumbnail",
+            cell: ({ row }) => (
+                <img
+                    src={
+                        "/storage/product/thumbnails/" + row.original.thumbnail
+                    }
+                    alt={row.original.name}
+                    className="h-24 w-24"
+                />
+            ),
+        },
         {
             accessorKey: "name",
             // header: "Name",
@@ -40,19 +54,6 @@ function Index({ products }: { products: Product[] }) {
             },
         },
         {
-            accessorKey: "thumbnail",
-            header: ({ column }) => {
-                return (
-                    // Image
-                    <img
-                        src={column.getIsSorted() === "asc"}
-                        alt="Thumbnail"
-                        className="h-10 w-10 rounded-full"
-                    />
-                );
-            },
-        },
-        {
             accessorKey: "slug",
             header: ({ column }) => {
                 return (
@@ -63,6 +64,63 @@ function Index({ products }: { products: Product[] }) {
                         }
                     >
                         Slug
+                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                    </Button>
+                );
+            },
+        },
+        {
+            accessorKey: "price",
+            cell: ({ row }) => (
+                <div>
+                    {new Intl.NumberFormat("en-US", {
+                        style: "currency",
+                        currency: "IDR",
+                        currencyDisplay: "narrowSymbol",
+                    }).format(row.original.price)}
+                </div>
+            ),
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() =>
+                            column.toggleSorting(column.getIsSorted() === "asc")
+                        }
+                    >
+                        Price
+                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                    </Button>
+                );
+            },
+        },
+        {
+            accessorKey: "stock",
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() =>
+                            column.toggleSorting(column.getIsSorted() === "asc")
+                        }
+                    >
+                        Stock
+                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                    </Button>
+                );
+            },
+        },
+        {
+            accessorKey: "description",
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() =>
+                            column.toggleSorting(column.getIsSorted() === "asc")
+                        }
+                    >
+                        Description
                         <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                 );
