@@ -15,6 +15,13 @@ type Product = {
     name: string;
     slug: string;
     thumbnail: string;
+    description: string;
+    price: number;
+    stock: number;
+    category: {
+        id: string;
+        name: string;
+    };
 };
 
 function Index({ products }: { products: Product[] }) {
@@ -34,6 +41,13 @@ function Index({ products }: { products: Product[] }) {
                     alt={row.original.name}
                     className="h-24 w-24"
                 />
+            ),
+        },
+        {
+            accessorKey: "category",
+            header: "Category",
+            cell: ({ row }) => (
+                <div>{row.original.category.name}</div>
             ),
         },
         {
