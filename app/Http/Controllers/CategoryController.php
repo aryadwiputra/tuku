@@ -97,7 +97,7 @@ class CategoryController extends Controller implements HasMiddleware
         if($request->hasFile('icon'))
         {
             // Delete old icon
-            Storage::delete('public/category/icons/'.$category->icon);
+            Storage::disk('public')->delete('category/icons/'.$category->icon);
 
             $file = $request->file('icon');
 
@@ -120,11 +120,15 @@ class CategoryController extends Controller implements HasMiddleware
      * Remove the specified resource from storage.
      */
     public function destroy(Category $category)
-    {
-        Storage::delete('public/category/icons/'.$category->icon);
-
-        $category->delete();
-
-        return to_route('dashboard.categories.index')->with('success','Category deleted successfully');
+{
+    // Delete the image file from storage
+    if ($category->icon) {
+        Storage::disk('public')->delete('category/icons/' . $category->icon);
     }
+
+    // Delete the category
+    $category->delete();
+
+    return to_route('dashboard.categories.index')->with('success', 'Category deleted successfully');
+}
 }
