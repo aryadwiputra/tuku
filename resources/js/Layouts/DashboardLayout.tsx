@@ -25,6 +25,7 @@ import {
     Plus,
     Settings2,
     Shield,
+    ShoppingBag,
     Sparkles,
     SquareTerminal,
     Trash2,
@@ -129,6 +130,11 @@ const data = {
             url: route("dashboard.categories.index"),
             icon: ListTree,
         },
+        {
+            name: "Products",
+            url: route('dashboard.products.index'),
+            icon: ShoppingBag
+        }
     ],
     roleAccess: [
         {
