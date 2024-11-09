@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DashboardLayout from "@/Layouts/DashboardLayout";
 import { Button } from "@/Components/ui/button";
 import { Head, Link, router, useForm, usePage } from "@inertiajs/react";
-import { ArrowLeft, ArrowLeftIcon } from "lucide-react";
+import { ArrowLeft, ArrowLeftIcon, Plus, X } from "lucide-react";
 import {
     Card,
     CardContent,
@@ -31,14 +31,14 @@ type Category = {
 };
 
 type Product = {
+    id: string;
     category_id: string;
-    id: number;
     name: string;
-    slug: string;
-    thumbnail: string;
     description: string;
+    thumbnail: string;
     price: string;
     stock: string;
+    images: string[];
 };
 
 type Props = {
@@ -55,13 +55,57 @@ function Edit({ categories, product }: Props) {
         thumbnail: "",
         price: product.price,
         stock: product.stock,
+        images: [] as File[],
     });
+
+    const [previewImages, setPreviewImages] = useState<string[]>(
+        product.images
+    );
+
+    useEffect(() => {
+        setPreviewImages(product.images);
+    }, [product.images]);
+
+    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            const newImages = Array.from(e.target.files);
+            setData("images", [...data.images, ...newImages]);
+
+            newImages.forEach((image) => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setPreviewImages((prev) => [
+                        ...prev,
+                        reader.result as string,
+                    ]);
+                };
+                reader.readAsDataURL(image);
+            });
+        }
+    };
+
+    const removeImage = (index: number) => {
+        setData(
+            "images",
+            data.images.filter((_, i) => i !== index)
+        );
+        setPreviewImages(previewImages.filter((_, i) => i !== index));
+
+        handleDeleteImage(index);
+    };
+    const handleDeleteImage = (index: number) => {
+        const imageId = product.images[index].id;
+
+
+        router.delete(
+            route("dashboard.products.delete-image", [product.id, imageId])
+        );
+        setPreviewImages(previewImages.filter((_, i) => i !== index));
+    };
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
-        console.log(data)
-
+        console.log(data);
         post(route("dashboard.products.update", product.id));
     };
 
@@ -83,13 +127,12 @@ function Edit({ categories, product }: Props) {
                                     <div className="">
                                         <CardTitle>Edit Product</CardTitle>
                                         <CardDescription>
-                                            Edit a product
+                                            Edit an existing product
                                         </CardDescription>
                                     </div>
                                 </div>
                             </CardHeader>
                             <CardContent>
-                                {/* Form */}
                                 <form
                                     onSubmit={handleSubmit}
                                     encType="multipart/form-data"
@@ -142,13 +185,13 @@ function Edit({ categories, product }: Props) {
                                                 id="name"
                                                 type="text"
                                                 placeholder="Enter product name"
+                                                value={data.name}
                                                 onChange={(e) =>
                                                     setData(
                                                         "name",
                                                         e.target.value
                                                     )
                                                 }
-                                                value={data.name}
                                             />
                                             {errors.name && (
                                                 <InputError
@@ -163,13 +206,13 @@ function Edit({ categories, product }: Props) {
                                                     id="price"
                                                     type="number"
                                                     placeholder="Enter product price"
+                                                    value={data.price}
                                                     onChange={(e) =>
                                                         setData(
                                                             "price",
                                                             e.target.value
                                                         )
                                                     }
-                                                    value={data.price}
                                                 />
                                                 {errors.price && (
                                                     <InputError
@@ -183,13 +226,13 @@ function Edit({ categories, product }: Props) {
                                                     id="stock"
                                                     type="number"
                                                     placeholder="Enter product stock"
+                                                    value={data.stock}
                                                     onChange={(e) =>
                                                         setData(
                                                             "stock",
                                                             e.target.value
                                                         )
                                                     }
-                                                    value={data.stock}
                                                 />
                                                 {errors.stock && (
                                                     <InputError
@@ -203,15 +246,14 @@ function Edit({ categories, product }: Props) {
                                             <Textarea
                                                 id="description"
                                                 placeholder="Enter product description"
+                                                value={data.description}
                                                 onChange={(e) =>
                                                     setData(
                                                         "description",
                                                         e.target.value
                                                     )
                                                 }
-                                                value={data.description}
                                             />
-
                                             {errors.description && (
                                                 <InputError
                                                     message={errors.description}
@@ -232,9 +274,8 @@ function Edit({ categories, product }: Props) {
                                                     )
                                                 }
                                             />
-                                            <span className="text-sm text-muted-foreground">
-                                                Let empty if you don't want to
-                                                change the thumbnail
+                                            <span className="text-xs text-muted-foreground">
+                                                Let empty if you don't want to update
                                             </span>
                                             {progress && (
                                                 <Progress
@@ -249,13 +290,63 @@ function Edit({ categories, product }: Props) {
                                                 />
                                             )}
                                         </div>
-                                        {/* Submit and Back Button */}
+                                        <div className="mt-4">
+                                            <Label>Product Images</Label>
+                                            <div className="flex flex-wrap gap-4 mt-2">
+                                                {previewImages.map(
+                                                    (image, index) => (
+                                                        <div
+                                                            key={index}
+                                                            className="relative"
+                                                        >
+                                                            <img
+                                                                src={
+                                                                    `/storage/product/images/` +
+                                                                    image.image
+                                                                }
+                                                                alt={`Preview ${index}`}
+                                                                className="w-24 h-24 object-cover rounded"
+                                                            />
+                                                            <button
+                                                                type="button"
+                                                                onClick={() =>
+                                                                    removeImage(
+                                                                        index
+                                                                    )
+                                                                }
+                                                                className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+                                                            >
+                                                                <X className="w-4 h-4" />
+                                                            </button>
+                                                        </div>
+                                                    )
+                                                )}
+                                                <label className="w-24 h-24 flex items-center justify-center border-2 border-dashed border-gray-300 rounded cursor-pointer">
+                                                    <input
+                                                        type="file"
+                                                        multiple
+                                                        onChange={
+                                                            handleImageUpload
+                                                        }
+                                                        className="hidden"
+                                                        accept="image/*"
+                                                    />
+                                                    <Plus className="w-8 h-8 text-gray-400" />
+                                                </label>
+                                            </div>
+                                            {errors.images && (
+                                                <InputError
+                                                    message={errors.images}
+                                                />
+                                            )}
+                                        </div>
                                         <div className="inline-flex gap-1.5">
                                             <Button
                                                 disabled={processing}
                                                 type="submit"
+                                                className="mt-4"
                                             >
-                                                Edit
+                                                Update
                                             </Button>
                                         </div>
                                     </div>
