@@ -7,8 +7,21 @@ use Inertia\Inertia;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
-class RoleController extends Controller
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+
+class RoleController extends Controller implements HasMiddleware
 {
+    
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:roles-access', only:['index']),
+            new Middleware('permission:roles-create', only:['create','store']),
+            new Middleware('permission:roles-update', only:['edit', 'update']),
+            new Middleware('permission:roles-destroy', only:['destroy']),
+        ];
+    }
     /**
      * Display a listing of the resource.
      */

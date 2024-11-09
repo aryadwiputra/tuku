@@ -4,11 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
 
-class UserController extends Controller
+class UserController extends Controller implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:users-access', only:['index']),
+            new Middleware('permission:users-create', only:['create','store']),
+            new Middleware('permission:users-update', only:['edit', 'update']),
+            new Middleware('permission:users-destroy', only:['destroy']),
+        ];
+    }
     /**
      * Display a listing of the resource.
      */
