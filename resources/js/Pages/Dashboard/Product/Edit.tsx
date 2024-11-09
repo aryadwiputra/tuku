@@ -38,7 +38,7 @@ type Product = {
     thumbnail: string;
     price: string;
     stock: string;
-    images: string[];
+    images: { id: string; image: string }[];
 };
 
 type Props = {
@@ -55,57 +55,69 @@ function Edit({ categories, product }: Props) {
         thumbnail: "",
         price: product.price,
         stock: product.stock,
-        images: [] as File[],
     });
 
-    const [previewImages, setPreviewImages] = useState<string[]>(
-        product.images
-    );
+    const [previewImages, setPreviewImages] = useState<
+        { id: string; image: string }[]
+    >(product.images);
 
     useEffect(() => {
         setPreviewImages(product.images);
     }, [product.images]);
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files) {
-            const newImages = Array.from(e.target.files);
-            setData("images", [...data.images, ...newImages]);
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            const formData = new FormData();
+            formData.append("image", file);
 
-            newImages.forEach((image) => {
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                    setPreviewImages((prev) => [
-                        ...prev,
-                        reader.result as string,
-                    ]);
-                };
-                reader.readAsDataURL(image);
-            });
+            router.post(
+                route("dashboard.products.add-image", product.id),
+                formData,
+                {
+                    preserveState: true,
+                    preserveScroll: true,
+                    onSuccess: (page) => {
+                        const newImage = page.props.product.images[0];
+                        setPreviewImages((prevImages) => [
+                            ...prevImages,
+                            newImage,
+                        ]);
+                    },
+                    onError: (errors) => {
+                        console.error(errors);
+                    },
+                }
+            );
         }
     };
 
     const removeImage = (index: number) => {
-        setData(
-            "images",
-            data.images.filter((_, i) => i !== index)
-        );
-        setPreviewImages(previewImages.filter((_, i) => i !== index));
-
         handleDeleteImage(index);
     };
-    const handleDeleteImage = (index: number) => {
-        const imageId = product.images[index].id;
 
+    const handleDeleteImage = (index: number) => {
+        const imageId = previewImages[index].id;
 
         router.delete(
-            route("dashboard.products.delete-image", [product.id, imageId])
+            route("dashboard.products.delete-image", [product.id, imageId]),
+            {
+                preserveState: true,
+                preserveScroll: true,
+                onSuccess: () => {
+                    setPreviewImages((prevImages) =>
+                        prevImages.filter((_, i) => i !== index)
+                    );
+                },
+                onError: (errors) => {
+                    console.error(errors);
+                },
+            }
         );
-        setPreviewImages(previewImages.filter((_, i) => i !== index));
     };
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log(data);
         post(route("dashboard.products.update", product.id));
     };
 
@@ -275,7 +287,8 @@ function Edit({ categories, product }: Props) {
                                                 }
                                             />
                                             <span className="text-xs text-muted-foreground">
-                                                Let empty if you don't want to update
+                                                Let empty if you don't want to
+                                                update
                                             </span>
                                             {progress && (
                                                 <Progress
@@ -296,7 +309,7 @@ function Edit({ categories, product }: Props) {
                                                 {previewImages.map(
                                                     (image, index) => (
                                                         <div
-                                                            key={index}
+                                                            key={image.id}
                                                             className="relative"
                                                         >
                                                             <img
@@ -324,7 +337,6 @@ function Edit({ categories, product }: Props) {
                                                 <label className="w-24 h-24 flex items-center justify-center border-2 border-dashed border-gray-300 rounded cursor-pointer">
                                                     <input
                                                         type="file"
-                                                        multiple
                                                         onChange={
                                                             handleImageUpload
                                                         }

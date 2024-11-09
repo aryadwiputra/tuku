@@ -213,9 +213,37 @@ class ProductController extends Controller
     {
         Storage::disk('public')->delete('product/thumbnails/'.$product->thumbnail);
 
+        if( $product->images ){
+            foreach($product->images as $image){
+                Storage::disk('public')->delete('product/images/'.$image->image);
+            }
+        }
+        
         $product->delete();
+        
 
         return to_route('dashboard.products.index')->with('success','Product deleted successfully');
+    }
+
+    /**
+     * Add image
+     */
+    public function addImage(Request $request, $id){
+        $product = Product::find($id);
+
+        if($request->hasFile('image')) {
+            $image = $request->file('image');
+            $filename = time().'.'.$request->image->getClientOriginalExtension();
+
+            $image->storeAs('product/images', $filename, 'public');
+            
+            $image = ProductImage::create([
+                'product_id' => $product->id,
+                'image' => $filename,
+            ]);
+            
+            return to_route('dashboard.products.edit', $id)->with('success','Product image added successfully');
+        }
     }
 
     /**
