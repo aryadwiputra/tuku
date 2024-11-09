@@ -6,6 +6,7 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class CategoryController extends Controller implements HasMiddleware
@@ -44,12 +45,22 @@ class CategoryController extends Controller implements HasMiddleware
         $request->validate([
             'name'=> 'required|unique:categories',
             'description'=> 'required',
+            'icon'=> 'required',
         ]);
+
+        // Move icon
+        
+        $file = $request->file('icon');
+
+        $filename = time().'.'.$file->getClientOriginalExtension();
+
+        $file->storeAs('category/icons', $filename, 'public');
 
         $category = Category::create([
             'name'=> $request->name,
             'slug' => \Illuminate\Support\Str::slug($request->name),
             'description'=> $request->description,
+            'icon'=> $filename,
         ]);
 
         return to_route('dashboard.categories.index')->with('success','Category created successfully');
@@ -78,11 +89,28 @@ class CategoryController extends Controller implements HasMiddleware
     {
         $request->validate([
             'name'=> 'required|unique:categories,name,'.$category->id,
+            'description'=> 'required',
         ]);
+
+        $filename = $category->icon;
+        
+        if($request->hasFile('icon'))
+        {
+            // Delete old icon
+            Storage::delete('public/category/icons/'.$category->icon);
+
+            $file = $request->file('icon');
+
+            $filename = time().'.'.$file->getClientOriginalExtension();
+            
+            $file->storeAs('category/icons', $filename, 'public');
+        }
 
         $category->update([
             'name'=> $request->name,
             'slug' => \Illuminate\Support\Str::slug($request->name),
+            'description'=> $request->description,
+            'icon'=> $filename,
         ]);
 
         return to_route('dashboard.categories.index')->with('success','Category updated successfully');
@@ -93,6 +121,8 @@ class CategoryController extends Controller implements HasMiddleware
      */
     public function destroy(Category $category)
     {
+        Storage::delete('public/category/icons/'.$category->icon);
+
         $category->delete();
 
         return to_route('dashboard.categories.index')->with('success','Category deleted successfully');

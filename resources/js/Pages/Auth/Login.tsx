@@ -1,3 +1,4 @@
+import Checkbox from "@/Components/Checkbox";
 import InputError from "@/Components/Dashboard/InputError";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
@@ -110,7 +111,7 @@ export default function LoginPage() {
 
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center">
-                                            <input
+                                            <Checkbox
                                                 id="remember-me"
                                                 name="remember-me"
                                                 type="checkbox"
@@ -120,7 +121,6 @@ export default function LoginPage() {
                                                         e.target.checked
                                                     );
                                                 }}
-                                                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                                             />
                                             <Label
                                                 htmlFor="remember-me"

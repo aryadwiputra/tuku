@@ -1,5 +1,5 @@
 import { ModalForm } from "@/Components/Dashboard/ModalForm";
-import { Input } from "@/components/ui/input";
+import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
 import DashboardLayout from "@/Layouts/DashboardLayout";
 import { Head, router, usePage } from "@inertiajs/react";
@@ -7,7 +7,7 @@ import { DataTable } from "@/Components/Dashboard/DataTable";
 import { ColumnDef } from "@tanstack/react-table";
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowUpDown, PlusIcon } from "lucide-react";
+import { ArrowUpDown, PencilIcon, PlusIcon } from "lucide-react";
 import ButtonDelete from "@/Components/Dashboard/ButtonDelete";
 
 function Index({ categories }: { categories: Category[] }) {
@@ -16,6 +16,17 @@ function Index({ categories }: { categories: Category[] }) {
     };
 
     const columns: ColumnDef<Category>[] = [
+        {
+            accessorKey: "icon",
+            header: "Icon",
+            cell: ({ row }) => (
+                <img
+                    src={"/storage/category/icons/" + row.original.icon}
+                    alt={row.original.name}
+                    className="h-24 w-24"
+                />
+            ),
+        },
         {
             accessorKey: "name",
             // header: "Name",
@@ -66,7 +77,7 @@ function Index({ categories }: { categories: Category[] }) {
                             )
                         }
                     >
-                        Edit
+                        <PencilIcon className="h-4 w-4" />
                     </Button>
                     <ButtonDelete
                         id={row.original.id}

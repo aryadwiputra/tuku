@@ -11,6 +11,7 @@ import {
     AlertDialogTrigger,
 } from "@/Components/ui/alert-dialog";
 import { Button } from "@/Components/ui/button";
+import { TrashIcon } from "lucide-react";
 
 interface ButtonDeleteProps {
     id: number;
@@ -21,7 +22,9 @@ function ButtonDelete({ id, handleDelete }: ButtonDeleteProps) {
     return (
         <AlertDialog>
             <AlertDialogTrigger asChild>
-                <Button variant="destructive">Delete</Button>
+                <Button variant="destructive">
+                    <TrashIcon/>
+                </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
