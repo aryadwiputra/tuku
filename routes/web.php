@@ -5,14 +5,17 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
+// Route::get('/', function () {
+//     return Inertia::render('Welcome', [
+//         'canLogin' => Route::has('login'),
+//         'canRegister' => Route::has('register'),
+//         'laravelVersion' => Application::VERSION,
+//         'phpVersion' => PHP_VERSION,
+//     ]);
+// });
+
+Route::get('/', \App\Http\Controllers\LandingController::class .'@index')->name('landing.index');
+
 Route::middleware('auth')->as('dashboard')->name('dashboard.')->prefix('dashboard')->group(function () {
     Route::get('/', \App\Http\Controllers\DashboardController::class)->name('index');
     Route::resource('categories', \App\Http\Controllers\CategoryController::class);
